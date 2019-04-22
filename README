@@ -1,1 +1,15 @@
-Teambudak 
+Teambaduk Hackathon App
+
+Idea: A centralized app to cut down on paperwork and time taken for business decisions. 
+
+Implementation: Using android studio/IntelliJ to create the application, MariaDB/MySQL to handle database.
+
+Features to implement:
+1. Proper layout for document viewing.
+2. Implement upload function.
+3. Implement signing of documents.
+4. Fix login authorization.
+5. Set up hierarchy tree for authorization to view and sign documents. (Database)
+6. Improve upon the design and layout of overall app.
+
+
