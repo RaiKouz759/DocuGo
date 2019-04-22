@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+                android:layout_height="match_parent" android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="20dp"
+                android:orientation="vertical"
+                android:paddingBottom="20dp"
+                tools:context=".Home">
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/relative1">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="HOME"
+                android:id="@+id/textView"
+                android:layout_marginTop="0dp" android:layout_gravity="center" android:layout_centerInParent="true"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/relative2" android:layout_marginTop="50dp">
+        <Button
+                android:text="SEND"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/btnSend" android:layout_marginLeft="40dp"
+        />
+        <Button
+                android:text="SIGN"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/btnSign" android:layout_alignParentRight="true"
+                android:layout_marginRight="40dp" android:layout_marginTop="0dp" android:layout_alignParentTop="true"/>
+    </RelativeLayout>
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:layout_marginTop="120dp">
+
+        <TextView
+                android:text="Receiver"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/tvReceiver"
+                android:textSize="17sp"/>
+        <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:id="@+id/spinner_receiver"
+                android:layout_marginTop="20dp"/>
+    </RelativeLayout>
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp" android:layout_marginTop="180dp">
+
+        <TextView
+                android:text="Document"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/tvDocument"
+                android:textSize="17sp"/>
+        <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:id="@+id/spinner_document"
+                android:layout_marginTop="20dp"/>
+        <TextView
+                android:text="Signed/Unsigned"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/tvSigned"
+                android:layout_alignEnd="@+id/spinner_document" android:layout_alignBottom="@+id/spinner_document"
+                android:layout_alignParentStart="true" android:layout_marginStart="0dp" android:layout_marginEnd="0dp"
+                android:layout_marginBottom="-37dp" android:visibility="visible" android:textSize="18sp"
+                android:layout_marginTop="10dp"/>
+    </RelativeLayout>
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/relative3" android:layout_marginTop="400dp">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Medium Text"
+                android:id="@+id/home_password"
+                android:visibility="invisible"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Medium Text"
+                android:id="@+id/home_email"
+                android:layout_marginLeft="200dp" android:visibility="invisible"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Error Message"
+                android:id="@+id/err"
+                android:visibility="gone"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Medium Text"
+                android:id="@+id/home_name"
+                android:layout_marginTop="130dp" android:visibility="invisible"/>
+    </RelativeLayout>
+</RelativeLayout>
