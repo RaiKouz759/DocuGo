@@ -2,16 +2,24 @@ package com.example.centralapp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -26,63 +34,94 @@ public class Register extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        name = (EditText) findViewById(R.id.register_name);
-        password = (EditText) findViewById(R.id.register_password);
-        email = (EditText) findViewById(R.id.register_email);
+        name = findViewById(R.id.register_name);
+        password = findViewById(R.id.register_password);
+        email = findViewById(R.id.register_email);
     }
 
     public void register_register(View v){
-        Name = name.getText().toString();
-        Password = password.getText().toString();
-        Email = email.getText().toString();
-        BackGround b = new BackGround();
-        b.execute(Name, Password, Email);
+        Name = name.getText().toString().trim();
+        Password = password.getText().toString().trim();
+        Email = email.getText().toString().trim();
+        if (Name.isEmpty() || Password.isEmpty()) {
+            Toast.makeText(ctx, "Please enter all fields!", Toast.LENGTH_SHORT).show();
+        } else {
+            AttemptRegister b = new AttemptRegister();
+            b.execute(Name, Password, Email);
+        }
     }
 
-    class BackGround extends AsyncTask<String, String, String>{
+    class AttemptRegister extends AsyncTask<String, String, JSONObject>{
 
         @Override
-        protected String doInBackground(String... params) {
-            String name = params[0];
+        protected JSONObject doInBackground(String... params) {
+            String username = params[0];
             String password = params[1];
             String email = params[2];
-            String data="";
-            int tmp;
+            String response="";
+            JSONObject jsonObject = null;
 
             try {
-                URL url = new URL("https://teambudak.000webhostapp.com/app/register.php");
-                String urlParams = "name="+name+"&password="+password+"&email="+email;
+                URL url = new URL("http://10.0.2.2/register.php");
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                try {
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setDoOutput(true);
+                    urlConnection.setChunkedStreamingMode(0);
 
-                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.setDoOutput(true);
-                OutputStream os = httpURLConnection.getOutputStream();
-                os.write(urlParams.getBytes());
-                os.flush();
-                os.close();
-                InputStream is = httpURLConnection.getInputStream();
-                while((tmp=is.read())!=-1){
-                    data+= (char)tmp;
+                    String postParameters = "username="+username+"&password="+password+"&email="+email;
+                    PrintWriter out = new PrintWriter(urlConnection.getOutputStream());
+                    out.print(postParameters);
+                    out.close();
+                    urlConnection.connect();
+
+                    String line;
+                    BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    while ((line=br.readLine()) != null) {
+                        response += line;
+                    }
+                    try {
+                        Log.i("tagconvertstr", "["+response+"]");
+                        jsonObject = new JSONObject(response);
+
+                    } catch (JSONException e) {
+                        Log.e("JSON Parser", "Error parsing data " + e.toString());
+                    }
+
+
+                } finally {
+                    urlConnection.disconnect();
                 }
-                is.close();
-                httpURLConnection.disconnect();
-
-                return data;
+                return jsonObject;
 
             } catch (MalformedURLException e) {
-                e.printStackTrace();
-                return "Exception: "+e.getMessage();
+                e.printStackTrace(); //prints the throwable along with other details like the line number and class name where the exception occurred
             } catch (IOException e) {
                 e.printStackTrace();
-                return "Exception: "+e.getMessage();
             }
+            return null;
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            if(s.equals("")){
-                s="Data saved successfully.";
+        protected void onPostExecute(JSONObject s) {
+            int success = 0;
+            String message = "";
+            try {
+                success = s.getInt("success");
+                message = s.getString("message");
             }
-            Toast.makeText(ctx, s, Toast.LENGTH_LONG).show();
+            catch(JSONException e){
+                e.printStackTrace();
+            }
+            if(success == 1){
+                Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(ctx, MainActivity.class);
+                startActivity(intent);
+            }
+            else{
+                Toast.makeText(ctx, message, Toast.LENGTH_SHORT).show();
+            }
+
         }
     }
 

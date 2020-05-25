@@ -5,24 +5,37 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.simple.parser.JSONParser;
 
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     EditText name, password;
     String Name, Password;
-    Context ctx=this;
+    Context ctx= this;
     String NAME=null, PASSWORD=null, EMAIL=null;
+    JSONParser jsonParser = new JSONParser();
+
     int atemp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,92 +53,138 @@ public class MainActivity extends AppCompatActivity {
 
     public void main_login(View v) { //button to login
 
-        Name = name.getText().toString();
-        Password = password.getText().toString();
+        Name = name.getText().toString().trim();
+        Password = password.getText().toString().trim();
         if (Name.isEmpty() || Password.isEmpty()) {
             Toast.makeText(ctx, "Please enter all fields!", Toast.LENGTH_SHORT).show();
         } else {
-            BackGround b = new BackGround();
+            AttemptLogin b = new AttemptLogin();
             b.execute(Name, Password);
         }
     }
 
-    class BackGround extends AsyncTask<String, String, String> {
+    class AttemptLogin extends AsyncTask<String, String, JSONObject> {
 
         @Override
-        protected String doInBackground(String... params) {
-            String name = params[0];
+        protected JSONObject doInBackground(String... params) {
+            String username = params[0];
             String password = params[1];
-            String data="";
-            int tmp;
-
+            String response = "";
+            JSONObject jsonObject = null;
             try {
+
                 String err;
-                URL url = new URL("https://teambudak.000webhostapp.com/app/login.php");
+                URL url = new URL("http://10.0.2.2/loginLogic.php");
 
-                String urlParams = "name="+name+"&password="+password;
+                  //might be another to parse data as output params.
+//                List<Pair<String, String>> param = new ArrayList<>();
+//                param.add(new Pair<>("username", name));
+//                param.add(new Pair<>("password", password));
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
-                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.setDoOutput(true);
-                OutputStream os = httpURLConnection.getOutputStream();
-                os.write(urlParams.getBytes());
-                os.flush();
-                os.close();
-                InputStream is = httpURLConnection.getInputStream();
-                while((tmp=is.read())!=-1){
-                    data+= (char)tmp;
-                    atemp=49;
+                try {
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setDoOutput(true);
+                    urlConnection.setChunkedStreamingMode(0);
+
+                    String postParameters = "username="+username+"&password="+password;
+                    PrintWriter out = new PrintWriter(urlConnection.getOutputStream());
+                    out.print(postParameters);
+                    out.close();
+                    urlConnection.connect();
+
+
+                    String line;
+                    BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    while ((line=br.readLine()) != null) {
+                        response += line;
+                    }
+                    try {
+                        Log.i("tagconvertstr", "["+response+"]");
+                        jsonObject = new JSONObject(response);
+
+                    } catch (JSONException e) {
+                        Log.e("JSON Parser", "Error parsing data " + e.toString());
+                    }
+
+
+                } finally {
+                    urlConnection.disconnect();
                 }
-                //Toast.makeText(MainActivity.this, tmp, Toast.LENGTH_SHORT).show();
-                //try{
-                   // JSONObject flag = new JSONObject(data);
-                  //  flag.
-              //  }
-              //  catch(JSONException e){
-              //      e.printStackTrace();
-              //      err = "Exception: "+e.getMessage();
-             //   }
-                   // if(atemp==49){
-                        //Toast.makeText(MainActivity.this, "Please input a valid username/password", Toast.LENGTH_SHORT).show();
-                       // Intent intent = new Intent(this, MainActivity.class);
-                   //    finish();
-                  //  }
-
-
-
-                is.close();
-                httpURLConnection.disconnect();
-
-                return data;
+                return jsonObject;
+//
+//                String urlParams = "name="+name+"&password="+password;
+//
+//                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+//                httpURLConnection.setDoOutput(true);
+//                OutputStream os = httpURLConnection.getOutputStream();
+//                os.write(urlParams.getBytes());
+//                os.flush();
+//                os.close();
+//                InputStream is = httpURLConnection.getInputStream();
+//                BufferedReader streamReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+//                StringBuilder responseStrBuilder = new StringBuilder();
+//
+//                String inputStr;
+//                while ((inputStr = streamReader.readLine()) != null)
+//                    responseStrBuilder.append(inputStr);
+//                JSONObject jsonObject;
+//                try {
+//                    jsonObject = new JSONObject(responseStrBuilder.toString());
+//                }
+//                catch (JSONException e){
+//                    e.printStackTrace();
+//                    err = "Exception:" +e.getMessage();
+//                    return "";
+//                }
+//
+//
+//                is.close();
+//                httpURLConnection.disconnect();
+//                if(data.length() < 2){
+//                    System.out.println("Login failed.");
+//                    Toast.makeText(MainActivity.this, "Please input a valid username/password", Toast.LENGTH_SHORT).show();
+//                    finish();
+//                    return null;
+//                }
+//                return jsonObject.toString();
             } catch (MalformedURLException e) {
                 e.printStackTrace();
-                return "Exception: "+e.getMessage();
+                Log.d("exception","Exception: "+e.getMessage());
             } catch (IOException e) {
                 e.printStackTrace();
-                return "Exception: "+e.getMessage();
+                Log.d("exception","Exception: "+e.getMessage());
             }
+            return null;
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            String err=null;
-            try {
-                JSONObject root = new JSONObject(s);
-                JSONObject user_data = root.getJSONObject("user_data");
-                NAME = user_data.getString("name");
-                PASSWORD = user_data.getString("password");
-                EMAIL = user_data.getString("email");
-            } catch (JSONException e) {
-                e.printStackTrace();
-                err = "Exception: "+e.getMessage();
+        protected void onPostExecute(JSONObject s) {
+            if(s == null){
+                return;
             }
+            int success;
+            String message;
 
-            Intent i = new Intent(ctx, Home.class);
-            i.putExtra("name", s);
-            i.putExtra("password", PASSWORD);
-            i.putExtra("email", EMAIL);
-            i.putExtra("err", err);
-            startActivity(i);
+            try {
+                success = s.getInt("success");
+                message = s.getString("message");
+
+                if(success == 1) {
+                    Toast.makeText(getApplicationContext(),message,Toast.LENGTH_LONG).show();
+                    Intent i = new Intent(ctx, Home.class);
+                    i.putExtra("name", Name);
+                    i.putExtra("password", Password);
+                    startActivity(i);
+                }
+                else{
+                    Toast.makeText(getApplicationContext(),message,Toast.LENGTH_LONG).show();
+                }
+            }
+            catch(JSONException e){
+                e.printStackTrace();
+                return;
+            }
 
         }
     }
