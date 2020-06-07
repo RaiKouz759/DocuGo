@@ -29,12 +29,12 @@
 
     $userObject = new User();
 
-    // Register
+    // Login
 
-    if(!empty($username) && !empty($password) && !empty($email)){
+    if(!empty($username) && !empty($password)){
 
-        $json_array = $userObject->createNewRegisterUser($username, $password, $email);
 
+        $json_array = $userObject->loginUsers($username, $password);
 
         echo json_encode($json_array);
     }

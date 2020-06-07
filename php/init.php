@@ -1,14 +1,17 @@
 <?php
 
-error_reporting(0);
-
 $db_name = "test_ustapp";
 $mysql_user = "root";
-$mysql_pass = "123";
-$server_name = "localhost";
+$mysql_pass = "";
+$host = "localhost";
 
-$con = mysqli_connect($server_name, $mysql_user, $mysql_pass, $db_name);
+
+$con = new PDO("mysql:host=$host;dbname=$db_name", $mysql_user, $mysql_pass );
 
 if(!$con){
-    echo '{"message":"Unable to connect to the database."}';
+    echo '<h1>MySQL Server is not connected</h1>';
+}else{
+  echo '<h1>MySQL Server is connected</h1>';
 }
+echo $con
+?>

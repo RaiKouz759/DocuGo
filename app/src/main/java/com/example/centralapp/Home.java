@@ -29,7 +29,7 @@ import java.util.List;
 
 public class Home extends AppCompatActivity {
     String name, password, email, Err;
-    TextView nameTV, emailTV, passwordTV, err;
+    TextView nameTV, emailTV, passwordTV, err, document_info;
     Spinner spinner_receiver, spinner_document;
     public static final String EmployeeNamearray = "name";
     public static final String EmployeeName = "name";
@@ -41,7 +41,7 @@ public class Home extends AppCompatActivity {
     TextView employeename, mailid;
 
     private Spinner spinner;
-    private static final String PATH_TO_SERVER = "https://teambudak.000webhostapp.com/app/output.php";
+    private static final String PATH_TO_SERVER = "http://10.0.2.2/output.php";
     protected List<DataObject> spinnerData;
     private RequestQueue queue;
 
@@ -55,11 +55,23 @@ public class Home extends AppCompatActivity {
 
         spinner_receiver = findViewById(R.id.spinner_receiver);
         spinner_document = findViewById(R.id.spinner_document);
+        spinner_document.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                document_info.setText(spinnerData.get(position).getContent());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                return;
+            }
+        });
 
         nameTV = findViewById(R.id.home_name);
         emailTV = findViewById(R.id.home_email);
         passwordTV = findViewById(R.id.home_password);
         err = findViewById(R.id.err);
+        document_info = findViewById(R.id.textView3);
 
         name = getIntent().getStringExtra("name");
         password = getIntent().getStringExtra("password");
@@ -83,7 +95,7 @@ public class Home extends AppCompatActivity {
                 spinnerData = Arrays.asList(mGson.fromJson(response, DataObject[].class));
                 //display first question to the user
                 if(null != spinnerData){
-                    spinner = (Spinner) findViewById(R.id.spinner_receiver);
+                    spinner = (Spinner) findViewById(R.id.spinner_document);
                     assert spinner != null;
                     spinner.setVisibility(View.VISIBLE);
                     SpinnerAdapter spinnerAdapter = new SpinnerAdapter(Home.this, spinnerData);
@@ -97,5 +109,6 @@ public class Home extends AppCompatActivity {
         });
         queue.add(stringRequest);
     }
+
 }
 

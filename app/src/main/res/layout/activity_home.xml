@@ -49,6 +49,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/spinner_receiver"
                 android:layout_marginTop="20dp"/>
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="370dp"
+            android:layout_height="248dp"
+            android:layout_alignEnd="@id/spinner_receiver"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="91dp" />
+
+
     </RelativeLayout>
     <RelativeLayout
             android:layout_width="match_parent"
@@ -59,18 +70,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/tvDocument"
                 android:textSize="17sp"/>
+
         <Spinner
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/spinner_document"
-                android:layout_marginTop="20dp"/>
+            android:id="@+id/spinner_document"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp" />
+
         <TextView
-                android:text="Signed/Unsigned"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/tvSigned"
-                android:layout_alignEnd="@+id/spinner_document" android:layout_alignBottom="@+id/spinner_document"
-                android:layout_alignParentStart="true" android:layout_marginStart="0dp" android:layout_marginEnd="0dp"
-                android:layout_marginBottom="-37dp" android:visibility="visible" android:textSize="18sp"
-                android:layout_marginTop="10dp"/>
+            android:id="@+id/tvSigned"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_alignEnd="@+id/spinner_document"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="10dp"
+            android:text="Document Info"
+            android:textSize="18sp"
+            android:visibility="visible" />
+
     </RelativeLayout>
     <RelativeLayout
             android:layout_width="match_parent"
